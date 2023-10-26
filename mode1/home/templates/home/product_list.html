@@ -1,0 +1,61 @@
+<style>
+.container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card {
+      width: 22rem;
+      margin-bottom: 25px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-img-top{
+      height: 300px;
+      width: 100%;
+      object-fit: center;
+    }
+
+    .card-body {
+      padding: 16px;
+      background-color:  grey;
+      border-radius: 0 0 8px 8px;
+
+    }
+     .card-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .card-text {
+      font-size: 14px;
+      color: white;
+    }
+
+</style>
+
+<div class="container">
+       {% for product in products %}
+        <div class="card">
+          <img class="card-img-top" src="{{product.items_img.url}}" alt="card image cap">
+            <div class="card-body">
+              <h5 class="card-title">{{product.name}}</h5>
+              <p class="card-text">{{product.description}}</p>
+              <p class="card-text">price:{{product.price}}</p>
+            </div>
+        </div>
+       {% endfor %}
+   </div>
