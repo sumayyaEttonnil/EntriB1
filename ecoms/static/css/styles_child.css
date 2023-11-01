@@ -1,0 +1,14 @@
+.logo-container{
+background-color: #babd8c;
+border: 2px solid #bec1c4;
+padding: 10px;
+}
+
+.logo1-container{
+     width: 1300px;
+    height: 400px;
+    background-image: url('/static/img/images.jpg');
+    background-repeat: repeat;
+
+
+}

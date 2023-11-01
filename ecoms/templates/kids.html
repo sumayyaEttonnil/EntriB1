@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Kids{% endblock %}
+
+{% block content %}
+    <h1>Dresses</h1>
+    <div class="container">
+        <div class="row">
+            {% for k in kid %}
+                <div class="col-md-3 mb-4">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="{{ k.product_img.url }}" alt="{{ k.product_name }}" style="height: 350px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ k.product_name }}</h5>
+                            <p class="card-text">${{ k.product_price }}</p>
+                            <h6>Free Delivery</h6>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet"type="text/css" href="{% static '/css/styles_child.css' %}">
+{% endblock %}
+
+
+{% block content %}
+   {% if user.is_authenticated %}
+   <h3 style="color:grey;">welcome, {{ user.username }}!</h3>
+   <div class="text-right mb-3">
+       <div style="border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 1px; padding: 5px; display: inline-block;">
+
+       <h5><a href="{% url 'logout' %}" style="color:#6c7a80;">Logout</a> </h5>
+       </div>
+   </div>
+   {% endif %}
+   <div class="logo-container">
+     <center>
+         <img src="{% static 'img/logo.png' %}" alt="LogoImage">
+     </center>
+ </div>
+  <div class="logo1-container">
+
+  </div>
+{% endblock %}
