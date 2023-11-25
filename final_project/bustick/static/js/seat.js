@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to fetch booked seats for a specific bus ID
   function fetchBookedSeats(busId, date) {
     // Make a GET request to your backend API endpoint
-    fetch(`/your_backend_booking_endpoint/?busId=${busId}&date=${date}`, {
+    fetch(`/backend_booking_endpoint/?busId=${busId}&date=${date}`, {
       method: 'GET',
     })
       .then(response => {
