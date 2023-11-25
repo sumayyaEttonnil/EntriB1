@@ -3,12 +3,16 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to toggle seat layout visibility
   function toggleSeatsBtn(button) {
     const seatLayout = button.nextElementSibling;
+    const legend = seatLayout.querySelector('.legend'); // Selecting the legend
+
     if (seatLayout) {
       if (seatLayout.style.display === 'none' || seatLayout.style.display === '') {
         seatLayout.style.display = 'block';
+        legend.style.display = 'block'; // Show the legend
         button.textContent = 'Hide Seats';
       } else {
         seatLayout.style.display = 'none';
+        legend.style.display = 'none'; // Hide the legend
         button.textContent = 'View Seats';
       }
     } else {

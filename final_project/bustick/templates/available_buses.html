@@ -103,6 +103,45 @@
       background-color: transparent;
       border: none;
     }
+
+  .legend {
+    display: flex;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    flex-wrap: wrap;
+    width: fit-content; /* Adjust the container width based on content */
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    /* margin-right: 20px; Remove fixed margin */
+  }
+
+  .legend-item span {
+    margin-left: 5px;
+  }
+
+  .status-icon {
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+    border-radius: 50%;
+  }
+
+  .available-icon {
+    background-color: #00ff00; /* Green */
+  }
+
+  .booked-icon {
+    background-color: #ff0000; /* Red */
+  }
+
+  .selected-icon {
+    background-color: #0000ff; /* Blue */
+  }
 </style>
 
 {% if buses_info %}
@@ -122,6 +161,21 @@
 
         <button class="toggleSeatsBtn">View Seats</button>
         <div class="seat-container" style="display: none;">
+            <div class="legend" style="display: flex;">
+              <div class="legend-item" style="margin-right: 20px;">
+                <div class="status-icon available-icon"></div>
+                <span>Available Seat</span>
+              </div>
+              <div class="legend-item" style="margin-right: 20px;">
+                <div class="status-icon booked-icon"></div>
+                <span>Booked Seat</span>
+              </div>
+              <div class="legend-item">
+                <div class="status-icon selected-icon"></div>
+                <span>Selected Seat</span>
+              </div>
+            </div>
+
           <!-- Your seat layout -->
           <div class="deck" style="width: 100%; height: 300px; display: flex; flex-direction: column;">
             <div class="row" style="display: flex;">
@@ -182,6 +236,7 @@
   </div>
 {% else %}
   <p>No buses available for the selected route.</p>
+  </div>
 {% endif %}
 
 <script src="{% static 'js/seat.js' %}"></script>
