@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Layout</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Bus layout styles */
+    .bus-layout {
+     max-width: 800px; /* Adjust the maximum width as needed */
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+
+    /* Deck styles */
+    .deck {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    /* Row styles */
+    .row {
+      display: flex;
+      align-items: center;
+      /*justify-content: space-between;*/
+      margin-bottom: 10px;
+    }
+
+    /* Box styles */
+    .box {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Gap box styles */
+    .gap {
+      width: 40px;
+      background-color: transparent;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="bus-layout">
+    <h2>Upper Deck</h2>
+    <div class="deck"style="width: 40%; height: 150px;">
+      <div class="row">
+        <div class="box">
+          <span class="seat">R1</span>
+        </div>
+        <div class="box">
+          <span class="seat">R2</span>
+        </div>
+
+        <div class="box gap"></div>
+
+        <div class="box">
+          <span class="seat">L1</span>
+        </div>
+        <div class="box">
+          <span class="seat">L2</span>
+        </div>
+
+      </div>
+      <!-- Add more rows if needed -->
+         <div class="row">
+        <div class="box">
+          <span class="seat">R1</span>
+        </div>
+        <div class="box">
+          <span class="seat">R2</span>
+        </div>
+
+        <div class="box gap"></div>
+
+        <div class="box">
+          <span class="seat">L1</span>
+        </div>
+        <div class="box">
+          <span class="seat">L2</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Lower Deck -->
+    <h2>Lower Deck</h2>
+    <div class="deck"style="width: 40%; height: 150px;">
+      <!-- Similar structure as Upper Deck -->
+    </div>
+  </div>
+</body>
+</html>

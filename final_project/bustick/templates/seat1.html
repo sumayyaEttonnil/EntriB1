@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Layout</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+    /* Seat container */
+    .seat-container {
+      padding: 20px;
+
+    }
+
+    /* Seat layout styles */
+    .deck {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      border: 1px solid #ccc;
+
+    }
+
+    /* Row styles */
+    .row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    /* Box styles */
+    .box {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+     .available {
+      background-color: #00ff00; /* Green */
+    }
+
+    .booked {
+      background-color: #ff0000; /* Red */
+      cursor: not-allowed;
+    }
+
+    .selected {
+      background-color: #0000ff; /* Blue */
+    }
+
+    /* Gap box styles */
+    .gap {
+      width: 60px;
+      background-color: transparent;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="seat-container">
+    <h2>Upper Deck</h2>
+    <div class="deck" style="width: 70%; height: 750px;">
+      {% for i in num %}
+        <div class="row">
+          {% if i != 12 %}
+             <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}A</span>
+            </div>
+             <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}B</span>
+            </div>
+
+            <div class="box gap"></div>
+
+             <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}C</span>
+            </div>
+             <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}D</span>
+            </div>
+          {% else %}
+             <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}A</span>
+            </div>
+              <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}B</span>
+            </div>
+            <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}C</span>
+            </div>
+            <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}D</span>
+            </div>
+            <div class="box available" onclick="toggleSeatColor(this)">
+              <span class="seat">{{i}}E</span>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+   <script>
+    function toggleSeatColor(seat) {
+      if (seat.classList.contains('available')) {
+        seat.classList.remove('available');
+        seat.classList.add('selected');
+      } else if (seat.classList.contains('selected')) {
+        seat.classList.remove('selected');
+        seat.classList.add('selected');
+      }
+    }
+     function bookSeats() {
+    const selectedSeats = document.querySelectorAll('.selected .seat');
+    const seatNumbers = Array.from(selectedSeats).map(seat => seat.innerText);
+
+    // Make an AJAX request to Django backend to process the payment and book seats
+    fetch('/process_payment/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}',  // Include your CSRF token here
+      },
+      body: JSON.stringify({ selectedSeats: seatNumbers }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Update seat availability on successful payment
+        selectedSeats.forEach(seat => {
+          seat.parentNode.classList.remove('selected');
+          seat.parentNode.classList.add('booked');
+        });
+      } else {
+        console.error('Payment failed');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+  </script>
+</body>
+</html>

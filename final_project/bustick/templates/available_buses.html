@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Buses{% endblock %}
+{% block content %}
+<style>
+  /* Your existing styles */
+  /* ... */
+
+  .booking-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bus-details {
+    margin-top: 20px;
+    display: flex; /* Updated */
+    flex-wrap: wrap;
+  }
+
+  .bus-info {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-right: 20px; /* Added */
+    flex: 0 0 calc(100% - 500px); /* Added */
+  }
+
+  .bus-info strong {
+    font-weight: bold;
+  }
+  .bus-detail {
+    margin-right: 20px; /* Add space between span elements */
+  }
+
+ body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    /* Seat container */
+    .seat-container {
+      padding: 20px;
+      width: 100%; /* Added */
+    }
+
+   .passengerDetailsForm {
+    width: 480px; /* Adjust width according to your preference */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none;
+    margin-top: 20px; /* Added */
+    flex: 0 0 480px; /* Added */
+  }
+
+    /* Seat layout styles */
+    .deck {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+
+
+    }
+
+    /* Row styles */
+    .row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    /* Box styles */
+    .box {
+      width: 50px;
+      height: 50px;
+      border: 0.5px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+     .available {
+      background-color: #00ff00; /* Green */
+    }
+
+    .booked {
+      background-color: #ff0000; /* Red */
+      cursor: not-allowed;
+    }
+
+    .selected {
+      background-color: #0000ff; /* Blue */
+    }
+
+    /* Gap box styles */
+    .gap {
+      width: 60px;
+      background-color: transparent;
+      border: none;
+    }
+</style>
+
+{% if buses_info %}
+  <h5>{{ source_stop_name }} to {{ dest_stop_name }} on {{ date }}</h5>
+  <strong id="date">{{ date }}</strong>
+  <div class="bus-details">
+    {% for bus_info in buses_info %}
+      <div class="bus-info">
+        <strong id="busId">{{ bus_info.bus.id }}</strong>
+        <strong id="busName">{{ bus_info.bus.name }}</strong><br>
+        <span>Available Seats: {{ bus_info.total_seats }}</span><br>
+        <span>Bus Type: {{ bus_info.bus_type }}</span><br>
+        <span>Departure Time: {{ bus_info.departure_time }}</span><br>
+        <span>Arrival Time: {{ bus_info.arrival_time }}</span><br>
+        <span>Duration: {{ bus_info.duration1 }} </span><br>
+        <span class="priceValue" data-price="{{ bus_info.price }}">Price: {{ bus_info.price }}</span><br>
+
+        <button class="toggleSeatsBtn">View Seats</button>
+        <div class="seat-container" style="display: none;">
+          <!-- Your seat layout -->
+          <div class="deck" style="width: 100%; height: 300px; display: flex; flex-direction: column;">
+            <div class="row" style="display: flex;">
+              {% for i in num %}
+                <div class="box available">
+                  <span class="seat" data-seat-number="{{ i }}A" data-bus-id="{{ bus_info.bus.id }}">{{ i }}A</span>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="row" style="display: flex;">
+              {% for i in num %}
+                <div class="box available">
+                  <span class="seat" data-seat-number="{{ i }}B" data-bus-id="{{ bus_info.bus.id }}">{{ i }}B</span>
+                </div>
+              {% endfor %}
+            </div>
+    <div class="row" style="display: flex;">
+        {% for i in num %}
+            {% if i == 12 %}
+                <div class="box available">
+                    <span class="seat" data-seat-number="{{ i }}C" data-bus-id="{{ bus_info.bus.id }}">{{ i }}C</span>
+                </div>
+            {% else %}
+                <div class="box"></div>
+            {% endif %}
+        {% endfor %}
+        <div class="box gap"></div>
+    </div>
+    <div class="row" style="display: flex;">
+        {% for i in num %}
+            <div class="box available">
+                <span class="seat" data-seat-number="{{ i }}D" data-bus-id="{{ bus_info.bus.id }}">{{ i }}D</span>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row" style="display: flex;">
+        {% for i in num %}
+            <div class="box available">
+                <span class="seat" data-seat-number="{{ i }}E" data-bus-id="{{ bus_info.bus.id }}">{{ i }}E</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+        <div class="booking-section">
+          <span>Total Price: <span id="totalPrice">0</span></span>
+        </div>
+        <div class="passengerDetailsForm" style="display: none;">
+          <h2>Passenger Details</h2>
+          <div id="passengerDetails"></div>
+          <label for="sharedContact">Contact Number:</label>
+          <input type="text" id="sharedContact" name="sharedContact" required><br><br>
+          <button type="button" id="proceedToBook">Book Ticket</button>
+          <button type="button" id="closePassengerDetails">Close</button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No buses available for the selected route.</p>
+{% endif %}
+
+<script src="{% static 'js/seat.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Page</title>
+  <!-- Add any necessary CSS styles -->
+  <style>
+    /* Example styles */
+    .payment-container {
+      text-align: center;
+      margin-top: 100px;
+    }
+    .total-price {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .form-input {
+      margin-bottom: 15px;
+    }
+    .proceed-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .confirmation-slip {
+      background-color: #f0f0f0;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .confirmation-slip h3 {
+      color: #333;
+    }
+    .confirmation-slip p {
+      margin: 5px 0;
+      color: #555;
+    }
+    .confirmation-slip .passenger-details {
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <h1>Payment Page</h1>
+    <div class="total-price" id="totalPrice">Total Price: {{ total_price }}</div>
+    <button class="proceed-button" id="proceedToPay">Proceed to Pay</button>
+    <div id="paymentFormContainer" style="display: none;">
+      <h2>Enter Payment Details</h2>
+      <form id="paymentForm">
+        <div class="form-input">
+          <label for="cardNumber">Card Number:</label>
+          <input type="password" id="cardNumber" placeholder="Enter card number" autocomplete="off" required>
+        </div>
+        <div class="form-input">
+          <label for="expiryDate">Expiry Date:</label>
+          <input type="text" id="expiryDate" placeholder="MM/YYYY" autocomplete="off" required>
+        </div>
+        <div class="form-input">
+          <label for="cvc">CVC:</label>
+          <input type="password" id="cvc" placeholder="Enter CVC" autocomplete="off" required>
+        </div>
+        <button type="submit" class="proceed-button" id="confirmPayment">Confirm Payment</button>
+      </form>
+      <div id="paymentDetails" style="margin-top: 20px;"></div>
+      <div id="additionalInfo" style="margin-top: 20px;"></div>
+    </div>
+  </div>
+
+  <!-- Confirmation Slip and Common Details Section -->
+  <div id="confirmationSlips" style="display: none; margin-top: 30px;">
+    <div id="commonDetails">
+      Bus ID: <span id="busIdValue"></span><br>
+      Date: <span id="dateValue"></span><br>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const proceedToPayBtn = document.getElementById('proceedToPay');
+      const paymentFormContainer = document.getElementById('paymentFormContainer');
+      const paymentDetailsElement = document.getElementById('paymentDetails');
+      const additionalInfoElement = document.getElementById('additionalInfo');
+      const confirmationSlipsElement = document.getElementById('confirmationSlips');
+      const busIdValueElement = document.getElementById('busIdValue');
+      const dateValueElement = document.getElementById('dateValue');
+
+      proceedToPayBtn.addEventListener('click', function() {
+        proceedToPayBtn.style.display = 'none';
+        paymentFormContainer.style.display = 'block';
+      });
+
+      const paymentForm = document.getElementById('paymentForm');
+      paymentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const cardNumber = document.getElementById('cardNumber').value.trim();
+        const expiryDate = document.getElementById('expiryDate').value.trim();
+        const cvc = document.getElementById('cvc').value.trim();
+
+        if (!cardNumber || !expiryDate || !cvc) {
+          alert('Please fill in all fields.');
+          return;
+        }
+
+        if (cardNumber.length !== 16 || cvc.length !== 3) {
+          alert('Invalid card information. Please check the details.');
+          return;
+        }
+
+        // Simulating a payment processing delay (you can replace this with actual payment processing logic)
+        setTimeout(() => {
+          alert('Payment successful!');
+          hidePaymentDetails();
+          displayConfirmationSlip();
+        }, 2000); // Display alert for 2 seconds, then proceed
+
+        // Clear form fields after the payment is confirmed
+        paymentForm.reset();
+      });
+
+      // Extract and display passenger details
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedPassengerDetails = urlParams.get('passengerDetails');
+      const busId = urlParams.get('busId');
+      const date = urlParams.get('date');
+
+      if (encodedPassengerDetails) {
+        const decodedPassengerDetails = JSON.parse(decodeURIComponent(encodedPassengerDetails));
+        let passengerDetailsHTML = '<h3>Passenger Details:</h3>';
+          decodedPassengerDetails.forEach(detail => {
+           passengerDetailsHTML += `<p>Name: ${detail.passengerName}, Seat: ${detail.seatNumber}, Gender: ${detail.passengerGender}</p>`;
+          });
+
+         const additionalInfoHTML = `<h3>Additional Information:</h3><p>Bus ID: ${busId}</p><p>Date: ${date}</p>`;
+
+         paymentDetailsElement.innerHTML = passengerDetailsHTML;
+         additionalInfoElement.innerHTML = additionalInfoHTML;
+
+         busIdValueElement.textContent = busId;
+         dateValueElement.textContent = date;
+      }
+
+      function hidePaymentDetails() {
+        paymentFormContainer.style.display = 'none';
+        paymentDetailsElement.style.display = 'none';
+        additionalInfoElement.style.display = 'none';
+      }
+
+function getCSRFToken() {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith('csrftoken=')) {
+      return cookie.substring('csrftoken='.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+  function updateDatabaseWithBookingStatus(busId, date, passengerDetails) {
+  const csrfToken = getCSRFToken();
+
+  if (!csrfToken) {
+    console.error('CSRF token not found.');
+    return;
+  }
+
+  passengerDetails.forEach(detail => {
+    fetch('/your_backend_booking_endpoint/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify({
+        busId: busId,
+        date: date,
+        passengerDetails: [detail], // Update database for each passenger
+      }),
+    })
+      .then(response => {
+        if (response.ok) {
+          // Database successfully updated for this passenger
+          // Optionally, perform any other actions after successful database update
+        } else {
+          throw new Error('Failed to update database.');
+        }
+      })
+      .catch(error => {
+        console.error('Error updating database:', error.message);
+        // Handle the error (e.g., show an error message to the user)
+      });
+  });
+}
+
+      function displayConfirmationSlip() {
+        const commonInfoHTML = `<div class="confirmation-slip">
+                                  <h3>Confirmation Slip</h3>
+                                  ${paymentDetailsElement.innerHTML}
+                                  ${additionalInfoElement.innerHTML}
+                                  <p>Ticket: Booked & Confirmed</p>
+                                  <br/><br/>
+                                  <button onclick="window.location.href = '/';">Back to Home</button>
+                                </div>`;
+
+        confirmationSlipsElement.innerHTML = commonInfoHTML;
+        confirmationSlipsElement.style.display = 'block';
+
+        // Update the database for each passenger in the confirmation slip
+        const urlParams = new URLSearchParams(window.location.search);
+        const busId = urlParams.get('busId');
+        const date = urlParams.get('date');
+        const encodedPassengerDetails = urlParams.get('passengerDetails');
+
+        if (encodedPassengerDetails) {
+          const decodedPassengerDetails = JSON.parse(decodeURIComponent(encodedPassengerDetails));
+          updateDatabaseWithBookingStatus(busId, date, decodedPassengerDetails);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

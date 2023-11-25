@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title%}home{% endblock %}
+{% block content %}
+ <style>
+        .custom-container {
+            background-image: url('/static/img/bus2e.jpg');
+            background-size: cover;
+            background-size: 100% 100%;
+            padding: 2em;
+            ma x-width: 40rem;
+            height: 60vh;
+            margin: 0 auto; /
+
+        }
+       .custom-container1 .container {
+           width: 20em;
+           height: 18em;
+           margin-left:0;
+       }
+}
+    </style>
+
+<div class="container-fluid custom-container">
+
+</div>
+<div class="container-fluid custom-container1">
+    <div class="container">
+        <img src="{% static 'img/busi2.png' %}" alt="Custom Icon">
+        <p>BookMyBus is the world's largest online bus ticket booking service trusted by over 25 million happy customers globally. BookMyBus offers bus ticket booking through its website, iOS and Android mobile apps for all major routes.</p>
+    </div>
+
+</div>
+
+
+{% endblock %}

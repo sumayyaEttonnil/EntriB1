@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.logout-container{
+    max-width: 500px; /* Set the maximum width */
+    margin:0 auto; /* Center the container horizontally */
+    padding: 20px; /* Add some padding */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    background-color:#b3afaf;
+    border-radius: 8px;
+    text-align:center;
+   }
+   .logout-container img {
+            max-width: 50%; /* Reduce the width of the image to 50% of the container */
+            height: auto; /* Maintain the aspect ratio */
+            display: block; /* Remove any extra space below the image */
+            margin: 0 auto;
+            }
+</style>
+</head>
+<body>
+     <div class="logout-container ">
+         <h4 style="color:red;"><img src="{% static 'img/busi2.png' %}" alt="Custom Icon">BookMyBus</h4>
+
+
+         <a href="{% url 'login' %}?username={{ last_logged_out_user }}">Login {{ last_logged_out_user }}</a>
+
+
+
+          </div>
+
+
+</body>
+</html>

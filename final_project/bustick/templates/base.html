@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Base{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% block extra_css %}{% endblock %}
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+       .content {
+            flex: 1;
+        }
+       .navbar-nav .nav-item .nav-link:hover {
+              color: #f26946;
+       }
+       .footer {
+            background-color: #b3b1b1;
+            padding: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+         <a class="navbar-brand" href="#">
+             <h1 style="color:red;"><img src="{% static 'img/busi2.png' %}" alt="Custom Icon"> BookMyBus</h1>
+
+
+            <i class="fas fa-bus"></i>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'search'%}">Search Buses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Booked Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
+                </li>
+                {% if request.user.is_active %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'signout' %}">Sign Out</a>
+                </li>
+                {% else %}
+                <li>
+                    <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+     <div class="content">
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 BusTicketBooking</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

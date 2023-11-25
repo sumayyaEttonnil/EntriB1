@@ -1,0 +1,51 @@
+body{
+background-color:#e8bbac;
+}
+.login-container {
+    max-width: 400px; /* Set the maximum width */
+    margin:0 auto; /* Center the container horizontally */
+    padding: 20px; /* Add some padding */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    background-color:#b3afaf;
+    border-radius: 8px;
+
+}
+
+
+
+
+/* Style for the form elements */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px; /* Add spacing below labels */
+}
+
+input {
+    padding: 10px; /* Add padding to input fields */
+    margin-bottom: 15px; /* Add spacing below input fields */
+    border: 1px solid #ccc; /* Add a border to input fields */
+    border-radius: 4px; /* Add border-radius for rounded corners */
+}
+
+button {
+    background-color: #ff6666; /* Set the background color */
+    color:#fff ; /* Set the text color */
+    padding: 10px; /* Add padding to the button */
+    border: none; /* Remove the default button border */
+    border-radius: 4px; /* Add border-radius for rounded corners */
+    cursor: pointer; /* Add a pointer cursor on hover */
+}
+
+/* Style for error message */
+p {
+    color: #ff0000; /* Set the error message color to red */
+    margin-top: 10px; /* Add spacing above the error message */
+}
+
+h2{
+ text-align:center;
+}
