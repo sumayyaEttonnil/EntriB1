@@ -124,7 +124,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 @csrf_exempt
-def your_backend_booking_endpoint(request):
+def backend_booking_endpoint(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
