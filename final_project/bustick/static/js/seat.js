@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+
   // Function to toggle seat layout visibility
   function toggleSeatsBtn(button) {
     const seatLayout = button.nextElementSibling;
@@ -15,11 +16,64 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Function to fetch booked seats for a specific bus ID
+  function fetchBookedSeats(busId, date) {
+    // Make a GET request to your backend API endpoint
+    fetch(`/your_backend_booking_endpoint?busId=${busId}&date=${date}`, {
+      method: 'GET',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch booked seats');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Booked seats data:', data); // Log retrieved booked seats data
+
+        // Process the response data (booked seat numbers)
+        const bookedSeats = data.bookedSeats; // Adjust the response structure based on your API
+        // Iterate through each booked seat and update their appearance
+        bookedSeats.forEach(seatNumber => {
+          const seatElement = document.querySelector(`[data-seat-number="${seatNumber}"][data-bus-id="${busId}"]`);
+          if (seatElement) {
+            seatElement.closest('.box').classList.remove('available');
+            seatElement.closest('.box').classList.add('booked');
+            // Disable the click event listener for the booked seat
+            seatElement.closest('.box').removeEventListener('click', seatClickHandler);
+          }
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching booked seats:', error);
+        // Handle the error scenario
+      });
+  }
+
   // Attach event listeners to all view seat buttons
   const viewSeatButtons = document.querySelectorAll('.toggleSeatsBtn');
   viewSeatButtons.forEach(button => {
     button.addEventListener('click', function() {
       toggleSeatsBtn(this);
+
+      const busIdElement = this.parentElement.querySelector('#busId');
+      const dateElement = this.parentElement.querySelector('#date');
+
+      // Check if busIdElement and dateElement are found
+      console.log('Bus ID Element:', busIdElement);
+      console.log('Date Element:', dateElement);
+
+      if (busIdElement && dateElement) {
+        const busId = busIdElement.textContent;
+        const date = dateElement.textContent;
+
+        console.log(`Bus ID: ${busId}, Date: ${date}`); // Log bus ID and date
+
+        // Call the function to fetch booked seats for the selected bus ID
+        fetchBookedSeats(busId, date);
+      }  else {
+      console.error('Bus ID or Date element not found');
+    }
     });
   });
 
@@ -39,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     passengerDetailsForm.style.display = 'none';
   }
 
-  function redirectToPayment(totalPrice,passengerDetails,busId,date) {
+  function redirectToPayment(totalPrice, passengerDetails, busId, date) {
     const encodedPassengerDetails = encodeURIComponent(JSON.stringify(passengerDetails));
     const paymentPageURL = `/payment/?totalPrice=${totalPrice}&passengerDetails=${encodedPassengerDetails}&busId=${busId}&date=${date}`;
     window.location.href = paymentPageURL;
@@ -69,11 +123,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const proceedToPayBtn = passengerDetailsForm.querySelector('#proceedToBook');
     proceedToPayBtn.addEventListener('click', function() {
-      console.log('clicked');
       const busIdElement = document.getElementById('busId');
       const busId = busIdElement.textContent;
       const date = document.getElementById('date').innerText;
-      console.log(busId)
+
       const passengerDetails = [];
 
       selectedSeats.forEach(seat => {
@@ -86,62 +139,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         passengerDetails.push({ seatNumber, passengerName, passengerGender });
-        console.log(passengerDetails)
       });
 
       if (passengerDetails.length === selectedSeats.length) {
-
-
-
-              // Redirect to payment page after the database is updated
-              const totalPrice = calculateTotalPrice(passengerDetailsForm.closest('.bus-info'));
-              redirectToPayment(totalPrice,passengerDetails,busId,date);
-              hidePassengerDetailsForm(passengerDetailsForm);
-
-          };
-      })
+        const totalPrice = calculateTotalPrice(passengerDetailsForm.closest('.bus-info'));
+        redirectToPayment(totalPrice, passengerDetails, busId, date);
+        hidePassengerDetailsForm(passengerDetailsForm);
+      }
+    });
 
     const closePassengerDetailsBtn = passengerDetailsForm.querySelector('#closePassengerDetails');
     closePassengerDetailsBtn.addEventListener('click', function() {
       hidePassengerDetailsForm(passengerDetailsForm);
     });
-  };
+  }
 
-// Rest of your code...
+  // Add this block to prevent multiple bookings for the same seat
+  const busInfoElements = document.querySelectorAll('.bus-info');
 
-// Add this block to prevent multiple bookings for the same seat
-const busInfoElements = document.querySelectorAll('.bus-info');
+  function seatClickHandler(event) {
+    const clickedSeat = event.target.closest('.box');
+    if (clickedSeat) {
+      if (clickedSeat.classList.contains('available') || clickedSeat.classList.contains('selected')) {
+        toggleSeatColor(clickedSeat);
+        const updatedBusInfo = clickedSeat.closest('.bus-info');
+        updateTotalPrice(updatedBusInfo);
 
-function seatClickHandler(event) {
-  const clickedSeat = event.target.closest('.box');
-  if (clickedSeat) {
-    if (clickedSeat.classList.contains('available') || clickedSeat.classList.contains('selected')) {
-      toggleSeatColor(clickedSeat);
-      const updatedBusInfo = clickedSeat.closest('.bus-info');
-      updateTotalPrice(updatedBusInfo);
+        const selectedSeats = updatedBusInfo.querySelectorAll('.selected');
+        const passengerDetailsForm = updatedBusInfo.querySelector('.passengerDetailsForm');
 
-      const selectedSeats = updatedBusInfo.querySelectorAll('.selected');
-      const passengerDetailsForm = updatedBusInfo.querySelector('.passengerDetailsForm');
+        if (selectedSeats.length > 0) {
+          displayPassengerDetailsForm(selectedSeats, passengerDetailsForm);
+        } else {
+          hidePassengerDetailsForm(passengerDetailsForm);
+        }
 
-      if (selectedSeats.length > 0) {
-        displayPassengerDetailsForm(selectedSeats, passengerDetailsForm);
-      } else {
-        hidePassengerDetailsForm(passengerDetailsForm);
+        // Disable the click event listener for the selected seat
+        clickedSeat.classList.add('booked');
+        clickedSeat.removeEventListener('click', seatClickHandler);
       }
-
-      // Disable the click event listener for the selected seat
-      clickedSeat.classList.add('booked');
-      clickedSeat.removeEventListener('click', seatClickHandler);
     }
   }
-}
 
-busInfoElements.forEach(busInfoElement => {
-  const seatContainers = busInfoElement.querySelectorAll('.seat-container');
-  seatContainers.forEach(container => {
-    container.addEventListener('click', seatClickHandler);
+  busInfoElements.forEach(busInfoElement => {
+    const seatContainers = busInfoElement.querySelectorAll('.seat-container');
+    seatContainers.forEach(container => {
+      container.addEventListener('click', seatClickHandler);
+    });
   });
-});
 
   function calculateTotalPrice(busInfoElement) {
     let totalPrice = 0;
@@ -156,7 +201,6 @@ busInfoElements.forEach(busInfoElement => {
     const totalPrice = calculateTotalPrice(busInfoElement);
     totalPriceElement.textContent = totalPrice;
   }
-
 
   busInfoElements.forEach(busInfoElement => {
     updateTotalPrice(busInfoElement);

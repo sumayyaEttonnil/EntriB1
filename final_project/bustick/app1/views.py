@@ -179,6 +179,31 @@ def your_backend_booking_endpoint(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
+    elif request.method == 'GET':
+        try:
+            bus_id = request.GET.get('busId')
+            input_date = request.GET.get('date')
+            date_object = datetime.strptime(input_date, '%d-%m-%Y')
+            date = date_object.strftime('%Y-%m-%d')
+
+            # Fetch booked seats/passenger details for the specified bus_id and date
+            booked_seats = BookedSeat.objects.filter(bus_id=bus_id, date=date)
+
+            # Prepare the response data
+            booked_seat_details = []
+            for seat in booked_seats:
+                booked_seat_details.append({
+                    'seat_number': seat.seat_number,
+                    'passenger_name': seat.passenger_name,
+                    'passenger_gender': seat.passenger_gender,
+                    'status': seat.status
+                })
+
+            return JsonResponse({'booked_seats': booked_seat_details}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
     else:
         return JsonResponse({"error": "Method not allowed"}, status=405)
 
