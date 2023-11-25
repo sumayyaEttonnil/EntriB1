@@ -145,8 +145,8 @@
 </style>
 
 {% if buses_info %}
-  <h5>{{ source_stop_name }} to {{ dest_stop_name }} on {{ date }}</h5>
-  <strong id="date">{{ date }}</strong>
+  <h5 style="margin-left: 20px;">List of buses from {{ source_stop_name }} to {{ dest_stop_name }} on <strong>{{ date }}</strong></h5>
+  <!-- <strong id="date">{{ date }}</strong> -->
   <div class="bus-details">
     {% for bus_info in buses_info %}
       <div class="bus-info">
