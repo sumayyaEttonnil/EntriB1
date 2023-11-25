@@ -18,16 +18,10 @@
     display: flex; /* Updated */
     flex-wrap: wrap;
   }
-
   .bus-info {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    margin-right: 20px; /* Added */
-    flex: 0 0 calc(100% - 500px); /* Added */
+    border: 1px solid #ccc; /* Border for the bus info */
+    border-radius: 8px; /* Rounded corners for the bus info */
   }
-
   .bus-info strong {
     font-weight: bold;
   }
@@ -145,8 +139,8 @@
 </style>
 
 {% if buses_info %}
-  <h5 style="margin-left: 20px;">List of buses from {{ source_stop_name }} to {{ dest_stop_name }} on {{ date }}</h5>
-  <strong id="date">{{ date }}</strong>
+  <h5 style="margin-left: 20px;">List of buses from {{ source_stop_name }} to {{ dest_stop_name }} </h5>
+  &nbsp;&nbsp;&nbsp;&nbsp;Date: <strong id="date">{{ date }}</strong>
   <div class="bus-details">
     {% for bus_info in buses_info %}
       <div class="bus-info">
@@ -160,6 +154,7 @@
         <span class="priceValue" data-price="{{ bus_info.price }}">Price: {{ bus_info.price }}</span><br>
 
         <button class="toggleSeatsBtn">View Seats</button>
+
         <div class="seat-container" style="display: none;">
             <div class="legend" style="display: flex;">
               <div class="legend-item" style="margin-right: 20px;">
