@@ -182,9 +182,9 @@ def your_backend_booking_endpoint(request):
     elif request.method == 'GET':
         try:
             bus_id = request.GET.get('busId')
-            input_date = request.GET.get('date')
-            date_object = datetime.strptime(input_date, '%d-%m-%Y')
-            date = date_object.strftime('%Y-%m-%d')
+            date = request.GET.get('date')
+            # date_object = datetime.strptime(input_date, '%d-%m-%Y')
+            # date = date_object.strftime('%Y-%m-%d')
 
             # Fetch booked seats/passenger details for the specified bus_id and date
             booked_seats = BookedSeat.objects.filter(bus_id=bus_id, date=date)

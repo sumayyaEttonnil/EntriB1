@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to fetch booked seats for a specific bus ID
   function fetchBookedSeats(busId, date) {
     // Make a GET request to your backend API endpoint
-    fetch(`/your_backend_booking_endpoint?busId=${busId}&date=${date}`, {
+    fetch(`/your_backend_booking_endpoint/?busId=${busId}&date=${date}`, {
       method: 'GET',
     })
       .then(response => {
@@ -32,10 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Booked seats data:', data); // Log retrieved booked seats data
 
         // Process the response data (booked seat numbers)
-        const bookedSeats = data.bookedSeats; // Adjust the response structure based on your API
+        const bookedSeats = data.booked_seats; // Adjust the response structure based on your API
+
         // Iterate through each booked seat and update their appearance
         bookedSeats.forEach(seatNumber => {
-          const seatElement = document.querySelector(`[data-seat-number="${seatNumber}"][data-bus-id="${busId}"]`);
+          const seat = seatNumber.seat_number
+          const seatElement = document.querySelector(`[data-seat-number="${seat}"][data-bus-id="${busId}"]`);
           if (seatElement) {
             seatElement.closest('.box').classList.remove('available');
             seatElement.closest('.box').classList.add('booked');
@@ -56,24 +58,18 @@ document.addEventListener('DOMContentLoaded', function() {
     button.addEventListener('click', function() {
       toggleSeatsBtn(this);
 
-      const busIdElement = this.parentElement.querySelector('#busId');
-      const dateElement = this.parentElement.querySelector('#date');
+      const busId = this.parentElement.querySelector('#busId').textContent;
 
-      // Check if busIdElement and dateElement are found
-      console.log('Bus ID Element:', busIdElement);
-      console.log('Date Element:', dateElement);
+      const date_input = document.getElementById('date').innerText;
+      // Split the date string into day, month, and year
+      const [day, month, year] = date_input.split('-');
+      // Rearrange the components to form the desired date format (YYYY-MM-DD)
+      const date = `${year}-${month}-${day}`;
 
-      if (busIdElement && dateElement) {
-        const busId = busIdElement.textContent;
-        const date = dateElement.textContent;
+      console.log(`Bus ID: ${busId}, Date: ${date}`); // Log bus ID and date
 
-        console.log(`Bus ID: ${busId}, Date: ${date}`); // Log bus ID and date
-
-        // Call the function to fetch booked seats for the selected bus ID
-        fetchBookedSeats(busId, date);
-      }  else {
-      console.error('Bus ID or Date element not found');
-    }
+      // Call the function to fetch booked seats for the selected bus ID
+      fetchBookedSeats(busId, date);
     });
   });
 
@@ -85,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (seat.classList.contains('selected')) {
       seat.classList.remove('selected');
       seat.classList.add('available');
+    } else if (seat.classList.contains('booked')) {
+    // Handle the scenario where a booked seat is clicked (optional)
+    console.log('This seat is already booked and cannot be selected.');
     }
     updateTotalPrice(seat.closest('.bus-info'));
   }
@@ -157,29 +156,45 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add this block to prevent multiple bookings for the same seat
   const busInfoElements = document.querySelectorAll('.bus-info');
 
-  function seatClickHandler(event) {
-    const clickedSeat = event.target.closest('.box');
-    if (clickedSeat) {
-      if (clickedSeat.classList.contains('available') || clickedSeat.classList.contains('selected')) {
-        toggleSeatColor(clickedSeat);
-        const updatedBusInfo = clickedSeat.closest('.bus-info');
-        updateTotalPrice(updatedBusInfo);
+  // Event listener for seat selection
+function seatClickHandler(event) {
+  const clickedSeat = event.target.closest('.box');
+  if (clickedSeat) {
+    if (clickedSeat.classList.contains('selected')) {
+      // If the seat is already selected, toggle it back to available and update UI
+      toggleSeatColor(clickedSeat);
+      const updatedBusInfo = clickedSeat.closest('.bus-info');
+      updateTotalPrice(updatedBusInfo);
 
-        const selectedSeats = updatedBusInfo.querySelectorAll('.selected');
-        const passengerDetailsForm = updatedBusInfo.querySelector('.passengerDetailsForm');
+      const selectedSeats = updatedBusInfo.querySelectorAll('.selected');
+      const passengerDetailsForm = updatedBusInfo.querySelector('.passengerDetailsForm');
 
-        if (selectedSeats.length > 0) {
-          displayPassengerDetailsForm(selectedSeats, passengerDetailsForm);
-        } else {
-          hidePassengerDetailsForm(passengerDetailsForm);
-        }
-
-        // Disable the click event listener for the selected seat
-        clickedSeat.classList.add('booked');
-        clickedSeat.removeEventListener('click', seatClickHandler);
+      if (selectedSeats.length > 0) {
+        displayPassengerDetailsForm(selectedSeats, passengerDetailsForm);
+      } else {
+        hidePassengerDetailsForm(passengerDetailsForm);
       }
+    } else if (clickedSeat.classList.contains('available')) {
+      // If the seat is available, mark it as selected
+      toggleSeatColor(clickedSeat);
+      const updatedBusInfo = clickedSeat.closest('.bus-info');
+      updateTotalPrice(updatedBusInfo);
+
+      const selectedSeats = updatedBusInfo.querySelectorAll('.selected');
+      const passengerDetailsForm = updatedBusInfo.querySelector('.passengerDetailsForm');
+
+      if (selectedSeats.length > 0) {
+        displayPassengerDetailsForm(selectedSeats, passengerDetailsForm);
+      } else {
+        hidePassengerDetailsForm(passengerDetailsForm);
+      }
+    } else if (clickedSeat.classList.contains('booked')) {
+      // Handle the scenario where a booked seat is clicked (optional)
+      console.log('This seat is already booked and cannot be selected.');
     }
   }
+}
+
 
   busInfoElements.forEach(busInfoElement => {
     const seatContainers = busInfoElement.querySelectorAll('.seat-container');
