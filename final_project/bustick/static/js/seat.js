@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Function to fetch booked seats for a specific bus ID
-  function fetchBookedSeats(busId, date) {
+  function fetchBookedSeats(busId, date,busName) {
     // Make a GET request to your backend API endpoint
     fetch(`/backend_booking_endpoint/?busId=${busId}&date=${date}`, {
       method: 'GET',
@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleSeatsBtn(this);
 
       const busId = this.parentElement.querySelector('#busId').textContent;
+      const busNameElement1 = document.getElementById('busName');
+      const busName = busNameElement1.textContent.trim();
+      //console.log(busName);
 
       const date_input = document.getElementById('date').innerText;
       // Split the date string into day, month, and year
@@ -70,10 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
       // Rearrange the components to form the desired date format (YYYY-MM-DD)
       const date = `${year}-${month}-${day}`;
 
-      console.log(`Bus ID: ${busId}, Date: ${date}`); // Log bus ID and date
+      console.log(`Bus ID: ${busId}, Date: ${date},busName:${busName}`); // Log bus ID and date
 
       // Call the function to fetch booked seats for the selected bus ID
-      fetchBookedSeats(busId, date);
+      fetchBookedSeats(busId, date,busName);
     });
   });
 
@@ -96,9 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
     passengerDetailsForm.style.display = 'none';
   }
 
-  function redirectToPayment(totalPrice, passengerDetails, busId, date) {
+  function redirectToPayment(totalPrice, passengerDetails, busId, date,busName) {
     const encodedPassengerDetails = encodeURIComponent(JSON.stringify(passengerDetails));
-    const paymentPageURL = `/payment/?totalPrice=${totalPrice}&passengerDetails=${encodedPassengerDetails}&busId=${busId}&date=${date}`;
+    const paymentPageURL = `/payment/?totalPrice=${totalPrice}&passengerDetails=${encodedPassengerDetails}&busId=${busId}&date=${date}&busName=${busName}`;
     window.location.href = paymentPageURL;
   }
 
@@ -127,9 +130,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const proceedToPayBtn = passengerDetailsForm.querySelector('#proceedToBook');
     proceedToPayBtn.addEventListener('click', function() {
       const busIdElement = document.getElementById('busId');
+      const busNameElement = document.getElementById('busName');
       const busId = busIdElement.textContent;
       const date = document.getElementById('date').innerText;
-
+      const busName = busNameElement.textContent;
       const passengerDetails = [];
 
       selectedSeats.forEach(seat => {
@@ -146,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (passengerDetails.length === selectedSeats.length) {
         const totalPrice = calculateTotalPrice(passengerDetailsForm.closest('.bus-info'));
-        redirectToPayment(totalPrice, passengerDetails, busId, date);
+        redirectToPayment(totalPrice, passengerDetails, busId, date,busName);
         hidePassengerDetailsForm(passengerDetailsForm);
       }
     });

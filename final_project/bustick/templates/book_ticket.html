@@ -1,107 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bus Layout</title>
-  <style>
-    /* General styles */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* Bus layout styles */
-    .bus-layout {
-     max-width: 800px; /* Adjust the maximum width as needed */
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-    }
-
-    /* Deck styles */
-    .deck {
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-
-    /* Row styles */
-    .row {
-      display: flex;
-      align-items: center;
-      /*justify-content: space-between;*/
-      margin-bottom: 10px;
-    }
-
-    /* Box styles */
-    .box {
-      width: 50px;
-      height: 50px;
-      border: 1px solid #ccc;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Gap box styles */
-    .gap {
-      width: 40px;
-      background-color: transparent;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="bus-layout">
-    <h2>Upper Deck</h2>
-    <div class="deck"style="width: 40%; height: 150px;">
-      <div class="row">
-        <div class="box">
-          <span class="seat">R1</span>
-        </div>
-        <div class="box">
-          <span class="seat">R2</span>
-        </div>
-
-        <div class="box gap"></div>
-
-        <div class="box">
-          <span class="seat">L1</span>
-        </div>
-        <div class="box">
-          <span class="seat">L2</span>
-        </div>
-
-      </div>
-      <!-- Add more rows if needed -->
-         <div class="row">
-        <div class="box">
-          <span class="seat">R1</span>
-        </div>
-        <div class="box">
-          <span class="seat">R2</span>
-        </div>
-
-        <div class="box gap"></div>
-
-        <div class="box">
-          <span class="seat">L1</span>
-        </div>
-        <div class="box">
-          <span class="seat">L2</span>
-        </div>
-
-      </div>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Booked Tickets
+{% endblock %}
+{% block content %}
+    <div class="container mt-4">
+        {% if booked_tickets %}
+            <h1>Booked Tickets</h1>
+            <table class="table table-bordered mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Bus Name</th>
+                        <th>Bus ID</th>
+                        <th>Date</th>
+                        <th>Seat Number</th>
+                        <th>Passenger Name</th>
+                        <th>Passenger Gender</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booked_seat in booked_tickets %}
+                        <tr>
+                            <td>{{ booked_seat.bus_name }}</td>
+                            <td>{{ booked_seat.bus_id }}</td>
+                            <td>{{ booked_seat.date }}</td>
+                            <td>{{ booked_seat.seat_number }}</td>
+                            <td>{{ booked_seat.passenger_name }}</td>
+                            <td>{{ booked_seat.passenger_gender }}</td>
+                            <td>{{ booked_seat.status }}</td>
+                            <td>
+                                <form id="cancelForm_{{ booked_seat.id }}" action="{% url 'cancel_booking' booked_seat.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" type="button" onclick="confirmCancellation('cancelForm_{{ booked_seat.id }}')">Cancel</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No booked tickets to show.</p>
+        {% endif %}
     </div>
-
-    <!-- Lower Deck -->
-    <h2>Lower Deck</h2>
-    <div class="deck"style="width: 40%; height: 150px;">
-      <!-- Similar structure as Upper Deck -->
-    </div>
-  </div>
-</body>
-</html>
+    <script>
+        function confirmCancellation(formId) {
+            var confirmation = confirm("Are you sure you want to cancel this ticket?");
+            if (confirmation) {
+                document.getElementById(formId).submit();
+            } else {
+                // Cancel button was pressed
+                return false;
+            }
+        }
+    </script>
+{% endblock %}

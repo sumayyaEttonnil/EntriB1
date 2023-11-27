@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -19,7 +20,7 @@ def user_register(request):
         form = UserRegistration(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('login')
     else:
         form = UserRegistration()
     return render(request, 'register.html', {'form': form})
@@ -45,14 +46,15 @@ def signout(request):
     if request.user.is_authenticated:
         username = request.user.username
         logout(request)
-        request.session['last_logged_out'] = username
-        last_logged_out_user = request.session.get('last_logged_out')
-    return render(request, 'logout.html', {'last_logged_out_user': last_logged_out_user})
+        return redirect('home')
+        #request.session['last_logged_out'] = username
+        #last_logged_out_user = request.session.get('last_logged_out')
+    #return render(request, 'logout.html', {'last_logged_out_user': last_logged_out_user})
 
 
-from .models import Bus, BoardingStop, DestinationStop, BookedSeat
+from .models import Bus, BoardingStop, DestinationStop, BookedSeat, Stop
 
-
+@login_required(login_url='/login/')
 def search_buses(request):
     if request.method == 'POST':
         source_stop_name = request.POST.get('source')
@@ -60,8 +62,8 @@ def search_buses(request):
         date = request.POST.get('date')
         formatted_date = datetime.strptime(date, '%Y-%m-%d').strftime('%d-%m-%Y')
 
-        source_stop_name_upper = source_stop_name.upper()
-        dest_stop_name_upper = dest_stop_name.upper()
+        source_stop_name_upper = source_stop_name
+        dest_stop_name_upper = dest_stop_name
         buses_with_source = Bus.objects.filter(boarding_stops__name=source_stop_name_upper)
         buses_with_destination = Bus.objects.filter(destination_stops__name=dest_stop_name_upper)
         common_buses = buses_with_source.intersection(buses_with_destination)
@@ -127,9 +129,12 @@ import json
 def backend_booking_endpoint(request):
     if request.method == 'POST':
         try:
+            user = request.user
+
             data = json.loads(request.body)
             bus_id = data.get('busId')
             input_date = data.get('date')
+            bus_name=data.get('busName')
             date_object = datetime.strptime(input_date, '%d-%m-%Y')
             date = date_object.strftime('%Y-%m-%d')
             passenger_details = data.get('passengerDetails')
@@ -140,19 +145,21 @@ def backend_booking_endpoint(request):
                 seat_number = seat['seatNumber'].strip()
 
                 # Check if the seat is already booked for the same bus and date
-                seat_exists = BookedSeat.objects.filter(bus_id=bus_id, date=date, seat_number=seat_number).exists()
+                seat_exists = BookedSeat.objects.filter(bus_name=bus_name,bus_id=bus_id, date=date, seat_number=seat_number).exists()
 
                 if not seat_exists:
                     # Seat is not booked, save it to the database
                     passenger_name = seat['passengerName']
                     passenger_gender = seat['passengerGender']
                     booked_seat = BookedSeat(
+                        bus_name=bus_name,
                         bus_id=bus_id,
                         date=date,
                         seat_number=seat_number,
                         passenger_name=passenger_name,
                         passenger_gender=passenger_gender,
-                        status='Booked'
+                        status='Booked',
+                        user=user
                     )
                     booked_seat.save()
 
@@ -169,6 +176,7 @@ def backend_booking_endpoint(request):
             return JsonResponse({
                 "message": "Seats booked successfully",
                 "data": {
+                    "busName":bus_name,
                     "busId": bus_id,
                     "date": date,
                     "bookedSeats": passenger_details,
@@ -210,3 +218,40 @@ def backend_booking_endpoint(request):
 def payment_view(request):
     total_price = request.GET.get('totalPrice')
     return render(request, 'payment.html', {'total_price': total_price})
+
+
+@login_required(login_url='/login/')
+def user_booked_tickets(request):
+    # Retrieve the booked tickets for the logged-in user
+    booked_tickets = BookedSeat.objects.filter(user=request.user)
+    return render(request, 'book_ticket.html', {'booked_tickets': booked_tickets})
+
+
+
+
+@login_required(login_url='/login/')
+def cancel_booking(request, booked_seat_id):
+    # Get the booked seat object
+    booked_seat = get_object_or_404(BookedSeat, id=booked_seat_id)
+
+    # Check if the logged-in user owns the booked seat
+    if booked_seat.user == request.user:
+        # Delete the booked seat
+        booked_seat.delete()
+
+    # Redirect back to the booked tickets page
+    return redirect('booked_tickets')
+
+@csrf_exempt
+def backend_stops_endpoint(request):
+    try:
+        # Fetch stops for the specified bus_id and date
+        stops=Stop.objects.all()
+        for s in stops:
+            print(s.name)
+        #stops = Stop.objects.all().values_list('name', flat=True)
+        #print(list(stops))
+        #return JsonResponse({'Stops': list(stops.values())}, status=200)
+        return render(request,'seat.html',{'stops':stops})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

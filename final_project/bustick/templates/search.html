@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}home{% endblock %}
+{% block body_class %}home{% endblock %}
 {% block content %}
 <style>
   /* Style for the form */
   form {
     width: 70%; /* Adjust the width as needed */
-    margin: 0 auto; /* Center the form horizontally */
+    margin: 100px auto; /* Center the form horizontally */
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -16,20 +17,18 @@
   .field-label {
     margin-bottom: 5px;
     font-weight: bold;
-    display: inline-block;
+    display: block;
     width: 100px; /* Adjust width as needed for label alignment */
     text-align: left; /* Align label text to the left */
   }
 
   .field-input {
-    width: calc(100% - 120px); /* Adjust width for input alignment */
+    width: calc(100% - 100px); /* Adjust width for input alignment */
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    display: inline-block;
-    text-align: left; /* Align input text to the left */
   }
 
   /* Style for the submit button */
@@ -52,18 +51,27 @@
 <form method="POST">
   {% csrf_token %}
   <div>
-    <label class="field-label">Source:</label>
-    {{ form.source }}
+    <label class="field-label" for="id_source">Source:</label>
+    <select class="field-input" name="source" id="id_source">
+      <option value="">Select Source</option>
+      {% for stop in form.source.field.queryset %}
+        <option value="{{ stop.name }}">{{ stop.name }}</option>
+      {% endfor %}
+    </select>
   </div>
   <div>
-    <label class="field-label">Destination:</label>
-    {{ form.destination }}
+    <label class="field-label" for="id_destination">Destination:</label>
+    <select class="field-input" name="destination" id="id_destination">
+      <option value="">Select Destination</option>
+      {% for stop in form.destination.field.queryset %}
+        <option value="{{ stop.name }}">{{ stop.name }}</option>
+      {% endfor %}
+    </select>
   </div>
   <div>
-    <label class="field-label">Date:</label>
+    <label class="field-label" for="id_date">Date:</label>
     {{ form.date }}
   </div>
-
-  <button type="submit" class="submit-button">Submit</button>
+  <input class="submit-button" type="submit" value="Search">
 </form>
 {% endblock %}

@@ -75,6 +75,7 @@
     <div id="commonDetails">
       Bus ID: <span id="busIdValue"></span><br>
       Date: <span id="dateValue"></span><br>
+      BusName:<span id="busNameValue"></span><br>
     </div>
   </div>
 
@@ -87,6 +88,7 @@
       const confirmationSlipsElement = document.getElementById('confirmationSlips');
       const busIdValueElement = document.getElementById('busIdValue');
       const dateValueElement = document.getElementById('dateValue');
+      const busNameValueElement = document.getElementById('busNameValue');
 
       proceedToPayBtn.addEventListener('click', function() {
         proceedToPayBtn.style.display = 'none';
@@ -127,6 +129,8 @@
       const encodedPassengerDetails = urlParams.get('passengerDetails');
       const busId = urlParams.get('busId');
       const date = urlParams.get('date');
+      const busName = urlParams.get('busName');
+
 
       if (encodedPassengerDetails) {
         const decodedPassengerDetails = JSON.parse(decodeURIComponent(encodedPassengerDetails));
@@ -135,13 +139,15 @@
            passengerDetailsHTML += `<p>Name: ${detail.passengerName}, Seat: ${detail.seatNumber}, Gender: ${detail.passengerGender}</p>`;
           });
 
-         const additionalInfoHTML = `<h3>Additional Information:</h3><p>Bus ID: ${busId}</p><p>Date: ${date}</p>`;
+         const additionalInfoHTML = `<p>Bus Name: ${busName}</p><p>Bus ID: ${busId}</p><p>Date: ${date}</p>`;
 
          paymentDetailsElement.innerHTML = passengerDetailsHTML;
          additionalInfoElement.innerHTML = additionalInfoHTML;
 
          busIdValueElement.textContent = busId;
          dateValueElement.textContent = date;
+         busNameValueElement.textContent = busName;
+
       }
 
       function hidePaymentDetails() {
@@ -161,7 +167,7 @@ function getCSRFToken() {
   return null;
 }
 
-  function updateDatabaseWithBookingStatus(busId, date, passengerDetails) {
+  function updateDatabaseWithBookingStatus(busId, date,busName, passengerDetails) {
   const csrfToken = getCSRFToken();
 
   if (!csrfToken) {
@@ -178,6 +184,7 @@ function getCSRFToken() {
       },
       body: JSON.stringify({
         busId: busId,
+        busName:busName,
         date: date,
         passengerDetails: [detail], // Update database for each passenger
       }),
@@ -214,11 +221,12 @@ function getCSRFToken() {
         const urlParams = new URLSearchParams(window.location.search);
         const busId = urlParams.get('busId');
         const date = urlParams.get('date');
+        const busName=urlParams.get('busName');
         const encodedPassengerDetails = urlParams.get('passengerDetails');
 
         if (encodedPassengerDetails) {
           const decodedPassengerDetails = JSON.parse(decodeURIComponent(encodedPassengerDetails));
-          updateDatabaseWithBookingStatus(busId, date, decodedPassengerDetails);
+          updateDatabaseWithBookingStatus(busId,date,busName,decodedPassengerDetails);
         }
       }
     });

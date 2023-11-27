@@ -64,6 +64,8 @@ class DestinationStop(models.Model):
 
 
 class BookedSeat(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, default=None)
+    bus_name=models.CharField(max_length=100, default='YourDefaultValueHere')
     bus_id = models.CharField(max_length=100, default='YourDefaultValueHere')
     date = models.DateField(default=date.today)
     seat_number = models.CharField(max_length=10)
@@ -72,4 +74,4 @@ class BookedSeat(models.Model):
     status = models.CharField(max_length=10, default='unknown')
 
     def __str__(self):
-        return f"Bus ID: {self.bus_id}, Seat Number: {self.seat_number}, Date: {self.date}, Passenger: {self.passenger_name}, Gender: {self.passenger_gender}, Status: {self.status}"
+        return f" Bus Name:{self.bus_name},Bus ID: {self.bus_id}, Seat Number: {self.seat_number}, Date: {self.date}, Passenger: {self.passenger_name}, Gender: {self.passenger_gender}, Status: {self.status}"

@@ -12,62 +12,103 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
-       .content {
+        .content {
             flex: 1;
+            position: relative;
         }
-       .navbar-nav .nav-item .nav-link:hover {
-              color: #f26946;
-       }
-       .footer {
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+        .navbar-brand h1 {
+            margin: 0;
+            font-size: 24px;
+            color: red;
+        }
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .navbar-nav .nav-item .nav-link {
+            color: #333;
+            font-weight: bold;
+        }
+         .time-display {
+            position: absolute;
+            top: 50px;
+            right: 1px;
+            color: #000;
+        }
+        .navbar-nav .nav-item .nav-link:hover {
+            color: #f26946;
+        }
+        .footer {
             background-color: #b3b1b1;
-            padding: 10px 0;
+            padding: 20px 0;
             text-align: center;
+            color: #fff;
+            font-size: 14px;
         }
     </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white">
-         <a class="navbar-brand" href="#">
-             <h1 style="color:red;"><img src="{% static 'img/busi2.png' %}" alt="Custom Icon"> BookMyBus</h1>
 
+<body class="{% block body_class %}{% endblock %}">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <h1><img src="{% static 'img/busi2.png' %}" alt="Custom Icon"> BookMyBus</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <!-- Your existing navbar items -->
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{% url 'search'%}">Search Buses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'booked_tickets' %}">Booked Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
+                    </li>
+                    {% if request.user.is_active %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signout' %}">Sign Out</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                    </li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-            <i class="fas fa-bus"></i>
-        </a>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="{% url 'search'%}">Search Buses</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Booked Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact Us</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
-                </li>
-                {% if request.user.is_active %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'signout' %}">Sign Out</a>
-                </li>
-                {% else %}
-                <li>
-                    <a class="nav-link" href="{% url 'login' %}">Sign In</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
-
-     <div class="content">
-
+    <div class="content">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Script to display current time -->
+    <div class="time-display">
+    <div style="background-color: #f2f2f2; padding: 5px; border-radius: 5px;">
+        <span style="font-weight: bold;">Time: </span><span id="currentTime"></span>
+    </div>
+</div>
+
 
     <footer class="footer">
         <div class="container">
@@ -78,5 +119,18 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        updateTime(); // Update immediately
+        setInterval(updateTime, 1000); // Update every second
+    </script>
 </body>
 </html>

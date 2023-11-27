@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Buses{% endblock %}
+{% block body_class %}home{% endblock %}
 {% block content %}
 <style>
   /* Your existing styles */
@@ -16,17 +17,86 @@
   .bus-details {
     margin-top: 20px;
     display: flex; /* Updated */
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */ /* Remove or comment this line */
+    flex-wrap: nowrap; /* Or set it to nowrap */
+    flex-direction: column; /* Add this line to ensure vertical display */
   }
   .bus-info {
+    margin-bottom: 20px; /* Add spacing between buses */
     border: 1px solid #ccc; /* Border for the bus info */
     border-radius: 8px; /* Rounded corners for the bus info */
+    padding-left: 20px;
+    background-color: #e5e5e5; /* Background color for each bus */
   }
   .bus-info strong {
     font-weight: bold;
   }
+
+.bus-info-content {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.bus-info-content > * {
+  margin-right: 5px;
+}
   .bus-detail {
     margin-right: 20px; /* Add space between span elements */
+  }
+
+.info-chips {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 20px;
+}
+
+.info-chip {
+  background-color: #d1ecf1;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
+.priceValue {
+  background-color: #d1ecf1;
+  /* Add additional styling for price chip */
+}
+
+  .toggleSeatsBtn {
+    background-color: #3498db; /* Change button color */
+    color: #fff; /* Text color */
+    padding: 8px 16px; /* Adjust padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 10px; /* Add margin for top space */
+  }
+
+    .box {
+    width: 40px !important;
+    height: 40px !important;
+    border: 0.5px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #fff; /* Background color for boxes */
+  }
+
+  .available {
+    background-color: #00ff00; /* Green */
+  }
+
+  .booked {
+    background-color: #ff0000; /* Red */
+    cursor: not-allowed;
+  }
+
+  .selected {
+    background-color: #0000ff; /* Blue */
   }
 
  body {
@@ -139,24 +209,29 @@
 </style>
 
 {% if buses_info %}
-  <h5 style="margin-left: 20px;">List of buses from {{ source_stop_name }} to {{ dest_stop_name }} </h5>
+  <h5 style="margin-left: 20px; margin-top: 30px;">List of buses from {{ source_stop_name }} to {{ dest_stop_name }} </h5>
   &nbsp;&nbsp;&nbsp;&nbsp;Date: <strong id="date">{{ date }}</strong>
   <div class="bus-details">
     {% for bus_info in buses_info %}
       <div class="bus-info">
-        <strong id="busId">{{ bus_info.bus.id }}</strong>
-        <strong id="busName">{{ bus_info.bus.name }}</strong><br>
-        <span>Total Seats: {{ bus_info.total_seats }}</span><br>
-        <span>Bus Type: {{ bus_info.bus_type }}</span><br>
-        <span>Departure Time: {{ bus_info.departure_time }}</span><br>
-        <span>Arrival Time: {{ bus_info.arrival_time }}</span><br>
-        <span>Duration: {{ bus_info.duration1 }} </span><br>
-        <span class="priceValue" data-price="{{ bus_info.price }}">Price: {{ bus_info.price }}</span><br>
-
-        <button class="toggleSeatsBtn">View Seats</button>
+          <strong id="busId">{{ bus_info.bus.id }}</strong>
+          <strong id="busName">{{ bus_info.bus.name }}</strong><br>
+          <div class="bus-info-content">
+              <div class="info-chips">
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="info-chip">Total Seats: {{ bus_info.total_seats }}</span>
+                <span class="info-chip">Bus Type: {{ bus_info.bus_type }}</span>
+                <span class="info-chip">Departure Time: {{ bus_info.departure_time }}</span>
+                <span class="info-chip">Arrival Time: {{ bus_info.arrival_time }}</span>
+                <span class="info-chip">Duration: {{ bus_info.duration1 }}</span>
+                <span class="info-chip priceValue" data-price="{{ bus_info.price }}">Price: {{ bus_info.price }}</span>
+              </div>
+          </div>
+            <button class="toggleSeatsBtn">View Seats</button>
 
         <div class="seat-container" style="display: none;">
             <div class="legend" style="display: flex;">
+
               <div class="legend-item" style="margin-right: 20px;">
                 <div class="status-icon available-icon"></div>
                 <span>Available Seat</span>
@@ -187,51 +262,51 @@
                 </div>
               {% endfor %}
             </div>
-    <div class="row" style="display: flex;">
-        {% for i in num %}
-            {% if i == 12 %}
+            <div class="row" style="display: flex;">
+                {% for i in num %}
+                {% if i == 12 %}
                 <div class="box available">
                     <span class="seat" data-seat-number="{{ i }}C" data-bus-id="{{ bus_info.bus.id }}">{{ i }}C</span>
                 </div>
-            {% else %}
+                {% else %}
                 <div class="box"></div>
-            {% endif %}
-        {% endfor %}
-        <div class="box gap"></div>
-    </div>
-    <div class="row" style="display: flex;">
-        {% for i in num %}
-            <div class="box available">
-                <span class="seat" data-seat-number="{{ i }}D" data-bus-id="{{ bus_info.bus.id }}">{{ i }}D</span>
+                {% endif %}
+                {% endfor %}
+                <div class="box gap"></div>
             </div>
-        {% endfor %}
-    </div>
-    <div class="row" style="display: flex;">
-        {% for i in num %}
-            <div class="box available">
-                <span class="seat" data-seat-number="{{ i }}E" data-bus-id="{{ bus_info.bus.id }}">{{ i }}E</span>
+            <div class="row" style="display: flex;">
+                {% for i in num %}
+                <div class="box available">
+                    <span class="seat" data-seat-number="{{ i }}D" data-bus-id="{{ bus_info.bus.id }}">{{ i }}D</span>
+                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
-</div>
+            <div class="row" style="display: flex;">
+                {% for i in num %}
+                <div class="box available">
+                    <span class="seat" data-seat-number="{{ i }}E" data-bus-id="{{ bus_info.bus.id }}">{{ i }}E</span>
+                </div>
+            {% endfor %}
+            </div>
+          </div>
 
-        <div class="booking-section">
-          <span>Total Price: <span id="totalPrice">0</span></span>
-        </div>
-        <div class="passengerDetailsForm" style="display: none;">
-          <h2>Passenger Details</h2>
-          <div id="passengerDetails"></div>
-          <label for="sharedContact">Contact Number:</label>
-          <input type="text" id="sharedContact" name="sharedContact" required><br><br>
-          <button type="button" id="proceedToBook">Book Ticket</button>
-          <button type="button" id="closePassengerDetails">Close</button>
+          <div class="booking-section">
+            <span>Total Price: <span id="totalPrice">0</span></span>
+          </div>
+          <div class="passengerDetailsForm" style="display: none;">
+            <h2>Passenger Details</h2>
+            <div id="passengerDetails"></div>
+            <label for="sharedContact">Contact Number:</label>
+            <input type="text" id="sharedContact" name="sharedContact" required><br><br>
+            <button type="button" id="proceedToBook">Book Ticket</button>
+            <button type="button" id="closePassengerDetails">Close</button>
+          </div>
         </div>
       </div>
-    {% endfor %}
+      {% endfor %}
   </div>
-{% else %}
-  <p>No buses available for the selected route.</p>
-  </div>
+    {% else %}
+        <p>No buses available for the selected route.</p>
 {% endif %}
 
 <script src="{% static 'js/seat.js' %}"></script>
