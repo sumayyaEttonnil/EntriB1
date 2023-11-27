@@ -65,18 +65,22 @@
         </div>
         <button type="submit" class="proceed-button" id="confirmPayment">Confirm Payment</button>
       </form>
-      <div id="paymentDetails" style="margin-top: 20px;"></div>
-      <div id="additionalInfo" style="margin-top: 20px;"></div>
+      <div id="paymentDetails" style="margin-top: 20px; display: block;"></div>
+      <div id="additionalInfo" style="margin-top: 20px; display: block;"></div>
     </div>
   </div>
 
   <!-- Confirmation Slip and Common Details Section -->
-  <div id="confirmationSlips" style="display: none; margin-top: 30px;">
-    <div id="commonDetails">
-      Bus ID: <span id="busIdValue"></span><br>
-      Date: <span id="dateValue"></span><br>
-      BusName:<span id="busNameValue"></span><br>
+  <div id="confirmationSlips" style="display: none; text-align: center; margin-top: 30px;">
+    <div style="display: inline-block; text-align: left; background-color: #f0f0f0; padding: 20px; border-radius: 10px;">
+      <h3>Confirmation Slip</h3>
+      <div id="paymentDetailsConfirmation"></div>
+      <div id="additionalInfoConfirmation" style="margin-top: 20px;"></div>
+      <p>Ticket: Booked & Confirmed</p>
     </div>
+    </div>
+  <div style="text-align: center; margin-top: 40px;">
+    <button onclick="window.location.href = '/';" style="padding: 10px 20px; margin-top: 20px; font-size: 16px; background-color: #28a745; color: white; border: none; cursor: pointer;">Back to Home</button>
   </div>
 
   <script>
@@ -92,6 +96,8 @@
 
       proceedToPayBtn.addEventListener('click', function() {
         proceedToPayBtn.style.display = 'none';
+        paymentFormContainer.style.display = 'block';
+        additionalInfoElement.style.display = 'none';
         paymentFormContainer.style.display = 'block';
       });
 
@@ -205,6 +211,9 @@ function getCSRFToken() {
 }
 
       function displayConfirmationSlip() {
+        const paymentDetailsConfirmation = document.getElementById('paymentDetailsConfirmation');
+        const additionalInfoConfirmation = document.getElementById('additionalInfoConfirmation');
+
         const commonInfoHTML = `<div class="confirmation-slip">
                                   <h3>Confirmation Slip</h3>
                                   ${paymentDetailsElement.innerHTML}
@@ -214,7 +223,8 @@ function getCSRFToken() {
                                   <button onclick="window.location.href = '/';">Back to Home</button>
                                 </div>`;
 
-        confirmationSlipsElement.innerHTML = commonInfoHTML;
+        paymentDetailsConfirmation.innerHTML = paymentDetailsElement.innerHTML;
+        additionalInfoConfirmation.innerHTML = additionalInfoElement.innerHTML;
         confirmationSlipsElement.style.display = 'block';
 
         // Update the database for each passenger in the confirmation slip
