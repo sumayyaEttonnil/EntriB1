@@ -46,6 +46,11 @@
   .submit-button:hover {
     background-color: #45a049;
   }
+
+  /* Style for disabled dates */
+  input[type="date"] {
+    color: #999; /* Change color of disabled dates */
+  }
 </style>
 
 <form method="POST">
@@ -68,9 +73,10 @@
       {% endfor %}
     </select>
   </div>
-  <div>
+    <div>
     <label class="field-label" for="id_date">Date:</label>
-    {{ form.date }}
+    {# Set min attribute to current date using Django template tag #}
+    <input class="field-input" type="date" name="date" id="id_date" min="{% now 'Y-m-d' %}">
   </div>
   <input class="submit-button" type="submit" value="Search">
 </form>
