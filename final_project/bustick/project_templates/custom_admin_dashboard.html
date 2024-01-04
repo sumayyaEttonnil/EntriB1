@@ -1,0 +1,105 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Bus List{% endblock %}
+
+{% block additional_styles %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        form {
+            display: inline-block;
+        }
+
+        input[type="submit"] {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>Bus Information</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Bus Name</th>
+                <th>Total Seats</th>
+                <th>Available Seats</th>
+                <th>Bus Type</th>
+                <th>Boarding Stops</th>
+                <th>Destination Stops</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in bus_data %}
+            <tr>
+                <td>{{ data.bus.id }}</td>
+                <td>{{ data.bus.name }}</td>
+                <td>{{ data.bus.total_seats }}</td>
+                <td>{{ data.bus.available_seats }}</td>
+                <td>{{ data.bus.get_bus_type_display }}</td>
+                <td>
+                    {% for stop in data.boarding_stops %}
+                        {{ stop.stop.name }} (Departure: {{ stop.departure_time|time:"H:i" }})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for stop in data.destination_stops %}
+                        {{ stop.stop.name }} (Arrival: {{ stop.arrival_time|time:"H:i" }})<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    <form action="{% url 'edit_bus' data.bus.id %}" method="get">
+                        {% csrf_token %}
+                        <input type="submit" value="Edit">
+                    </form>
+                    <form action="{% url 'delete_bus' data.bus.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock  %}

@@ -1,0 +1,78 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Edit Bus{% endblock %}
+
+{% block additional_styles %}
+    <style>
+        /* Custom styling */
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            max-width: 800px;
+            margin: 20px auto; /* Added margin to the form */
+            margin-bottom: 100px; /* Adjust margin to prevent overlap with the footer */
+        }
+        fieldset {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+        legend {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        input[type="text"],
+        select {
+            width: calc(100% - 20px); /* Adjusted width to account for padding */
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn-save {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%; /* Set button width to 100% */
+        }
+        .btn-save:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">Edit Bus Information</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <fieldset>
+            <legend>Boarding Stops</legend>
+            {{ boarding_stop_formset.management_form }}
+            {% for form in boarding_stop_formset %}
+                {{ form.as_p }}
+            {% endfor %}
+        </fieldset>
+
+        <fieldset>
+            <legend>Destination Stops</legend>
+            {{ destination_stop_formset.management_form }}
+            {% for form in destination_stop_formset %}
+                {{ form.as_p }}
+            {% endfor %}
+        </fieldset>
+
+        <input type="submit" value="Save" class="btn-save">
+    </form>
+{% endblock %}

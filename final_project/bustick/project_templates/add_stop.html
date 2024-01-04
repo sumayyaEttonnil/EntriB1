@@ -1,0 +1,61 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Add Stop{% endblock %}
+
+{% block additional_styles %}
+<style>
+    /* Add your additional styles specific to the 'Add Stop' page here */
+    form {
+        margin-top: 50px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center; /* To center the form elements */
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 24px); /* Adjust input field width */
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input[type="submit"] {
+        margin-top: 20px;
+        padding: 10px 40px; /* Adjust button padding */
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1>Add Stop</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_name">Stop Name:</label>
+        {{ stop_form.name }}
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}

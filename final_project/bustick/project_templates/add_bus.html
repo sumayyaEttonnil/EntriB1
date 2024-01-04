@@ -1,0 +1,83 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Add Bus{% endblock %}
+
+{% block additional_styles %}
+  <style>
+        /* Additional styles for the Add Bus form */
+        .form-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px; /* Add margin-bottom to create space from the footer */
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"],
+        select {
+            width: calc(100% - 20px); /* Adjusted width to account for padding */
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%; /* Set button width to 100% */
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .form-section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .form-section h2 {
+            margin-top: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Add Bus</h1>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ bus_form.as_p }}
+
+            <div class="form-section">
+                <h2>Boarding Stops</h2>
+                {{ boarding_stop_formset.management_form }}
+                {% for form in boarding_stop_formset %}
+                    {{ form.as_p }}
+                {% endfor %}
+            </div>
+
+            <div class="form-section">
+                <h2>Destination Stops</h2>
+                {{ destination_stop_formset.management_form }}
+                {% for form in destination_stop_formset %}
+                    {{ form.as_p }}
+                {% endfor %}
+            </div>
+
+
+            <input type="submit" value="Save" >
+        </form>
+    </div>
+{% endblock %}

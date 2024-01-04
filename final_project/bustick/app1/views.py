@@ -5,10 +5,14 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
+@login_required(login_url='/login/')
 def home(request):
+
+
     return render(request, 'home.html')
 
 
@@ -170,8 +174,24 @@ def backend_booking_endpoint(request):
                     # Add it to the list of already booked seats
                     booked_seats.append({
                         'seatNumber': seat_number,
-                        'alreadyBooked': True
-                    })
+                        'alreadyBooked': True})
+
+            if booked_seats:
+                user_email = user.email
+
+                email_subject = 'Bus Seat Booking Confirmation'
+                email_body = f"Your bus seat(s) for {bus_name} on {date} have been successfully booked!\n\nPassenger Details:\n"
+
+                for seat in booked_seats:
+                    email_body += f"Passenger Name: {seat['passengerName']}, Seat Number: {seat['seatNumber']}\n"
+
+                send_mail(
+                    email_subject,
+                    email_body,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user_email],
+                    fail_silently=False,
+                )
 
             return JsonResponse({
                 "message": "Seats booked successfully",
@@ -247,8 +267,8 @@ def backend_stops_endpoint(request):
     try:
         # Fetch stops for the specified bus_id and date
         stops=Stop.objects.all()
-        for s in stops:
-            print(s.name)
+
+
         #stops = Stop.objects.all().values_list('name', flat=True)
         #print(list(stops))
         #return JsonResponse({'Stops': list(stops.values())}, status=200)

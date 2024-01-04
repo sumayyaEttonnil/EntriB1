@@ -37,7 +37,7 @@ class Bus(models.Model):
     bus_type = models.CharField(max_length=30, choices=BUS_TYPE_CHOICES, default='Non-AC-Non-Sleeper')
 
     def __str__(self):
-        return self.name
+        return f"{self.name}-{self.boarding_stops}-{self.destination_stops}-{self.bus_type}"
 
 
 from datetime import datetime, timedelta

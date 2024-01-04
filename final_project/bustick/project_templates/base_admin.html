@@ -1,0 +1,119 @@
+<!-- base_admin.html -->
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Your Site Name{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add your custom CSS files here -->
+    {% block additional_styles %}{% endblock %}
+     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+        /* Other styles */
+
+        /* Footer styles */
+        .footer {
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <h1><img src="{% static 'img/busi2.png' %}" alt="Custom Icon"> BookMyBus</h1>
+        </a>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <!-- ... (Existing Sidebar Code) -->
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                Dashboard <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_bus' %}">
+                                Add Bus
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_stop' %}">
+                                Add Stop
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'stop_list' %}">
+                                Stop List
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'custom_admin_dashboard'   %}">
+
+                                Bus List
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users_list' %}">
+                                Users
+                            </a>
+                        </li>
+                        {% if request.user.is_active %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'signout' %}">
+                                Signout
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Content area -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+
+            <p>&copy; 2023 BusTicketBooking</p>
+
+    </footer>
+
+    <!-- Bootstrap and other JS files -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Add your custom JS files here -->
+</body>
+</html>

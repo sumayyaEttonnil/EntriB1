@@ -93,6 +93,11 @@
                         <a class="nav-link" href="{% url 'login' %}">Sign In</a>
                     </li>
                     {% endif %}
+                    {% if request.user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin_home' %}">Admin Dashboard</a>
+                        </li>
+                    {% endif %}
                     </ul>
                 </div>
             </div>

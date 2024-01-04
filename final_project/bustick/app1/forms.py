@@ -36,3 +36,25 @@ class BusStopSelectionForm(forms.Form):
     source = forms.ModelChoiceField(label='Source',  queryset=Stop.objects.all())
     destination = forms.ModelChoiceField(label='Destination',  queryset=Stop.objects.all())
     date = forms.DateField(label='Date', widget=forms.DateInput(attrs={'type': 'date'}))
+
+
+
+# forms.py
+
+from django import forms
+from .models import Bus, BoardingStop, DestinationStop
+
+class BusForm(forms.ModelForm):
+    class Meta:
+        model = Bus
+        fields = ['name', 'total_seats', 'available_seats', 'bus_type']
+
+class BoardingStopForm(forms.ModelForm):
+    class Meta:
+        model = BoardingStop
+        fields = ['stop', 'departure_time', 'distance']
+
+class DestinationStopForm(forms.ModelForm):
+    class Meta:
+        model = DestinationStop
+        fields = ['stop', 'arrival_time', 'distance']
